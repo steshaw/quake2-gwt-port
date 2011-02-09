@@ -108,18 +108,38 @@ public class Downloader implements Runnable {
 		os.close();
 		is.close();
 	}
+
+    private File grabDemoFile() throws IOException {
+        {
+            final String home = System.getProperty("user.home");
+            if (home != null) {
+                // aka ~/Downloads/q2-314-demo-x86.exe
+                final File demoDownloadDir = new File(home + "/Downloads/q2-314-demo-x86.exe");
+                if (demoDownloadDir.exists()) return demoDownloadDir;
+            }
+        }
+        {
+            final File demoThisDir = new File("q2-314-demo-x86.exe");
+            if (demoThisDir.exists()) return demoThisDir;
+        }
+        return downloadDemoFile();
+    }
+
+    private File downloadDemoFile() throws IOException {
+		InputStream is = url.openStream();
+		File tempFile = File.createTempFile("q2-temp", null);
+		tempFile.deleteOnExit();
+		System.out.print("Downloading");
+		copyStream(is, new FileOutputStream(tempFile), true);
+		System.out.println("Download finished; uncompressing");
+        return tempFile;
+    }
 	
 	public void run() {
 		try {
-			InputStream is = url.openStream();
-			File tempFile = File.createTempFile("q2-temp", null);
-			tempFile.deleteOnExit();
-			System.out.print("Downloading");
-			copyStream(is, new FileOutputStream(tempFile), true);
-			
-			System.out.println("Download finished; uncompressing");
-			
-			ZipFile zipFile = new ZipFile(tempFile);
+            File demoFile = grabDemoFile();
+		    System.out.println("uncompressing " + demoFile + " ...");
+			ZipFile zipFile = new ZipFile(demoFile);
 			Enumeration e = zipFile.entries();
 			while (e.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry)e.nextElement();
@@ -142,7 +162,7 @@ public class Downloader implements Runnable {
 				}
 			}
 			ok = true;
-			
+
 		} catch (IOException e) {
 			System.out.println("Donwload Failed");
 		}

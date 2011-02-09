@@ -3,3 +3,15 @@ Google's HTML5 port of Bytonic Software's Java port of Id Software's Quake II
 To install and run: http://http://code.google.com/p/quake2-gwt-port/wiki/BuildingAndRunning
 Eclipse setup: http://http://code.google.com/p/quake2-gwt-port/wiki/EclipseSetup
 
+====================================================================================================
+
+If you have trouble with the automated downloading of the "q2-314-demo-x86.exe" file from Ant, you 
+can download manually (either into your ~/Downloads or into the top directory of quake2-gwt-port)
+and it will be used. You will probably need to execute Ant target "clean-resources" otherwise the 
+Ant build script will imagine that you downloaded and unpacked the demo exe sucessfully.
+
+Try this:
+
+  $ curl -O ftp://ftp.idsoftware.com/idstuff/quake2/q2-314-demo-x86.exe
+  $ ant clean clean-resources run
+
