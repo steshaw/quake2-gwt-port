@@ -20,6 +20,7 @@ package jake2.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class WAVConverter extends Converter {
 	
@@ -84,6 +85,10 @@ public class WAVConverter extends Converter {
 		} else {
 			Process p = Runtime.getRuntime().exec(
 				lameLocation + " - " + outPath + ".mp3");
+			AutoOutputReaderRunnable op = new AutoOutputReaderRunnable(p.getInputStream());
+			AutoOutputReaderRunnable opb = new AutoOutputReaderRunnable(p.getErrorStream());
+			new Thread(op).start();
+			new Thread(opb).start();
 			p.getOutputStream().write(raw);
 			p.getOutputStream().close();
 		
@@ -92,12 +97,18 @@ public class WAVConverter extends Converter {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			op.shutdown();
+			opb.shutdown();
 		}
 		if (oggLocation == null) {
 			System.out.println("oggenc not found");
 		} else {
 			Process p = Runtime.getRuntime().exec(
 				oggLocation + " - -o " + outPath + ".ogg");
+			AutoOutputReaderRunnable op = new AutoOutputReaderRunnable(p.getInputStream());
+			AutoOutputReaderRunnable opb = new AutoOutputReaderRunnable(p.getErrorStream());
+			new Thread(op).start();
+			new Thread(opb).start();
 			p.getOutputStream().write(raw);
 			p.getOutputStream().close();
 		
@@ -106,6 +117,8 @@ public class WAVConverter extends Converter {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			op.shutdown();
+			opb.shutdown();
 		}
 	}
 
@@ -114,4 +127,33 @@ public class WAVConverter extends Converter {
     String pathName = outFile.getCanonicalFile().getParent();
     return pathName + File.separator + lowerFileName;
   }
+
+	public class AutoOutputReaderRunnable implements Runnable {
+		
+		private InputStream is;
+		
+		private boolean shutdown = false;
+		
+		public AutoOutputReaderRunnable(InputStream is) {
+			super();
+			this.is = is;
+		}
+		
+		@Override
+		public void run() {
+			while(!shutdown) {
+				try {
+					is.read();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		public void shutdown() {
+			shutdown = true;
+		}
+	
+	}
+
 }

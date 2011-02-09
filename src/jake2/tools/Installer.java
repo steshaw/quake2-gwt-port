@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package jake2.tools;
 
+import jake2.gwt.server.CompatibilityImpl;
+import jake2.qcommon.Compatibility;
+
 import java.io.File;
 
 /**
@@ -25,6 +28,7 @@ import java.io.File;
  */
 public class Installer {
   public static void main(String args[]) throws Throwable {
+	Compatibility.impl = new CompatibilityImpl();
     Downloader.main(args);
     if (args[0].equals("hires") && !new File("raw", "baseq2").exists()) {
         Downloader hirezTextureDl = new Downloader("http://www-personal.umich.edu/~jimw/q2/Quake2_tga_textures/q2_textures.zip");

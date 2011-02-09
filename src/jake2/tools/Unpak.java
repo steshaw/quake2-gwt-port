@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package jake2.tools;
 
+import jake2.qcommon.FS;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -120,7 +122,7 @@ public class Unpak {
 
     String canonicalPath = new File(outdir, filename).getCanonicalPath();
     File outFile = new File(canonicalPath);
-    createPath(outFile.getAbsolutePath());
+    FS.CreatePath(outFile.getAbsolutePath());
  //   outFile.createNewFile();
 
     ByteBuffer buf = ByteBuffer.allocateDirect(len);
