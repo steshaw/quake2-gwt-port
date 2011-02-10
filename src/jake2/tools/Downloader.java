@@ -109,6 +109,8 @@ public class Downloader implements Runnable {
 		is.close();
 	}
 
+    final File demoThisDir = new File("q2-314-demo-x86.exe");
+
     private File grabDemoFile() throws IOException {
         {
             final String home = System.getProperty("user.home");
@@ -127,12 +129,14 @@ public class Downloader implements Runnable {
 
     private File downloadDemoFile() throws IOException {
 		InputStream is = url.openStream();
+/*
 		File tempFile = File.createTempFile("q2-temp", null);
 		tempFile.deleteOnExit();
+*/
 		System.out.print("Downloading");
-		copyStream(is, new FileOutputStream(tempFile), true);
+		copyStream(is, new FileOutputStream(demoThisDir), true);
 		System.out.println("Download finished; uncompressing");
-        return tempFile;
+        return demoThisDir;
     }
 	
 	public void run() {
